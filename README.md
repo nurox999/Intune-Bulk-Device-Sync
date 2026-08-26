@@ -1,4 +1,4 @@
-# Intune Bulk Device Sync
+# Intune All Device Sync
 
 A PowerShell utility that allows Microsoft Intune administrators to trigger bulk synchronization for managed devices through Microsoft Graph.
 
