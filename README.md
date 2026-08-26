@@ -1,19 +1,30 @@
-# Intune-Sync-All-Devices Powershell
-# Intune Device Sync
+# Intune Bulk Device Sync
 
-A PowerShell utility for synchronizing Microsoft Intune managed devices on demand using Microsoft Graph PowerShell.
+A PowerShell utility that allows Microsoft Intune administrators to trigger bulk synchronization for managed devices through Microsoft Graph.
 
-The script is designed for Intune administrators who need a simple way to authenticate to different Microsoft Entra ID tenants, review device inventory, select a device platform, and trigger a device sync operation.
+## Why was this created?
+
+Microsoft Intune does not provide a simple option in the admin portal to trigger a **bulk device sync** for multiple managed devices at once.
+
+When managing a large number of devices, administrators may need to open devices individually and manually trigger a sync operation. This can become especially time-consuming in large environments.
+
+This script was created to provide a simple way to perform bulk synchronization using the Microsoft Graph PowerShell SDK.
+
+Instead of manually synchronizing devices one by one, administrators can authenticate to their Intune tenant, review the device inventory, select a platform, and trigger synchronization for all devices matching that platform.
+
+---
 
 ## Features
 
+- Bulk synchronization of Intune managed devices
 - Interactive Microsoft Graph authentication
 - Multi-tenant support
-- Displays authenticated account
-- Displays Tenant ID
+- No hard-coded tenant or user information
+- Displays the authenticated Microsoft account
+- Displays the Tenant ID
 - Retrieves Intune managed devices
 - Displays device counts by operating system
-- Platform-specific synchronization
+- Platform-based device selection
 - Supports:
   - iOS
   - iPadOS
@@ -21,28 +32,81 @@ The script is designed for Intune administrators who need a simple way to authen
   - Windows
   - macOS
   - All devices
-- Confirmation required before synchronization
-- Per-device sync status
-- Success and failure counters
-- Automatic Microsoft Graph session cleanup
-- Dependency and prerequisite checks
-- No stored credentials or hard-coded tenant information
+- Shows the number of devices that will be synchronized
+- Requires explicit confirmation before synchronization starts
+- Displays per-device synchronization status
+- Displays successful and failed device counts
+- Automatically disconnects the Microsoft Graph session
+- Checks required PowerShell modules before execution
 
-## Requirements
+---
 
-### Operating System
+## How it works
 
-Supported environments:
+The script connects to Microsoft Graph using interactive authentication.
 
-- macOS
-- Windows
-- Linux
+After authentication, it retrieves the managed devices from the connected Intune tenant and displays an overview of the device inventory.
 
-### PowerShell
+Example:
 
-PowerShell 7 or later is required.
+```text
+==================================================
+ INTUNE TENANT INFORMATION
+==================================================
 
-Verify the installation:
+Account              : admin@example.com
+Tenant ID            : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
-```powershell
-$PSVersionTable.PSVersion
+---------------- DEVICE COUNTS ----------------
+
+Total Intune devices : 1250
+iOS                  : 500
+iPadOS               : 100
+Windows              : 300
+macOS                : 150
+Android              : 180
+Other                : 20
+
+The administrator can then select which device platform should be synchronized.
+
+==================================================
+ SYNC DEVICE SELECTION
+==================================================
+
+Select which devices you want to sync:
+
+[1] iOS
+[2] iPadOS
+[3] Android
+[4] Windows
+[5] macOS
+[6] All devices
+[7] Cancel
+
+Enter your selection:
+
+After selecting a platform, the script displays the number of devices that will be affected.
+
+For example:
+
+Selected device type : iOS
+Devices to sync      : 500
+
+The synchronization does not start immediately.
+
+The script displays the tenant, account, selected platform and device count and waits for administrator confirmation.
+
+==================================================
+ SYNC HAS NOT STARTED
+==================================================
+
+Please review the information before continuing.
+
+Account        : admin@example.com
+Tenant ID      : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+Device type    : iOS
+Devices        : 500
+
+Press ENTER to start the sync:
+
+This confirmation step is intentional and helps prevent accidental bulk synchronization against the wrong tenant or platform.
